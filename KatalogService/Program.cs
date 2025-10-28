@@ -2,6 +2,9 @@
 using KatalogService.Models;
 using KatalogService.Services;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace KatalogService
 {
@@ -27,6 +30,40 @@ namespace KatalogService
 
             builder.Services.AddAutoMapper(cfg => { }, typeof(Program));
 
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.Authority = "http://localhost:8080/realms/isubu";
+                options.Audience = "katalog";
+                options.RequireHttpsMetadata = false;
+
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    RequireExpirationTime = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    ValidateIssuer = true,
+                    RoleClaimType = "roles",
+                    NameClaimType = "preferred_username",
+                    ClockSkew = TimeSpan.FromSeconds(15)
+                };
+            }).AddJwtBearer("ClientCredentialSchema", options =>
+            {
+                options.Authority = "http://localhost:8080/realms/isubu";
+                options.Audience = "katalog";
+                options.RequireHttpsMetadata = false;
+
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    ValidateIssuer = true,
+                };
+            });
+
+           
 
             var app = builder.Build();
 
@@ -48,6 +85,8 @@ namespace KatalogService
 
             app.UseHttpsRedirection();
 
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

@@ -4,6 +4,23 @@
     {
         public bool IsSuccess { get; set; }
         public ServisHataDto Error { get; set; }
+
+        public static ServisSonuc Basarili()
+        {
+            return new ServisSonuc
+            {
+                IsSuccess = true,
+            };
+        }
+
+        public static ServisSonuc Hata(ServisHataDto problemDetails)
+        {
+            return new ServisSonuc
+            {
+                IsSuccess = false,
+                Error = problemDetails
+            };
+        }
     }
 
     public class ServisSonuc<T> : ServisSonuc

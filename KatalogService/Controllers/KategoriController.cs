@@ -7,7 +7,7 @@ namespace KatalogService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+    [Authorize]
     public class KategoriController : ControllerBase
     {
         private readonly IKategoriService _kategoriService;
